@@ -3,10 +3,15 @@
 Plugin Name: WP Floating Button
 Plugin URI: https://wpzen.jp/
 Description: Adds a floating button to the bottom of the site.
-Version: 1.2
+Version: 1.2.1
 Author: YOSHIZUMI LLC
 Author URI: http://yoshizumi.tech
+License: GPL2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+GitHub Plugin URI: tokoton-yoshizumi/wp-floating-button
+GitHub Plugin URI: https://github.com/tokoton-yoshizumi/wp-floating-button
 */
+
 
 
 function floating_button_sanitize_settings($inputs)
