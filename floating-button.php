@@ -36,16 +36,23 @@ register_setting('floatingButton', 'floating_button_settings', 'floating_button_
 // メタボックスを追加
 function floating_button_add_meta_box()
 {
+    // すべての公開されている投稿タイプを取得
+    $post_types = get_post_types(['public' => true], 'names');
 
-    add_meta_box(
-        'floating_button_meta_box',           // ID of the meta box
-        __('WP Floating Button', 'floating-button'), // Title of the meta box
-        'floating_button_meta_box_html',      // Callback function to output the content
-        ['post', 'page'],                     // Post types
-        'side',                               // Context
-        'default'                             // Priority
-    );
+    // 各投稿タイプに対してメタボックスを追加
+    foreach ($post_types as $post_type) {
+        add_meta_box(
+            'floating_button_meta_box',           // ID of the meta box
+            __('WP Floating Button', 'floating-button'), // Title of the meta box
+            'floating_button_meta_box_html',      // Callback function to output the content
+            $post_type,                           // Post type
+            'side',                               // Context
+            'default'                             // Priority
+        );
+    }
 }
+add_action('add_meta_boxes', 'floating_button_add_meta_box');
+
 
 // メタボックスのHTMLコンテンツ
 function floating_button_meta_box_html($post)
