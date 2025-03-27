@@ -157,6 +157,7 @@ function floating_button_admin_scripts($hook_suffix)
     wp_enqueue_script('floating-button-color-picker', plugins_url('/js/admin-color-picker.js', __FILE__), array('jquery', 'wp-color-picker'), null, true);
     // Font Awesome CDNに変更
     wp_enqueue_style('font-awesome-cdn', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css', array(), null);
+    wp_enqueue_script('chart-js-cdn', 'https://cdn.jsdelivr.net/npm/chart.js', array(), null, true);
 
     wp_enqueue_media();
 
@@ -183,6 +184,16 @@ function floating_button_admin_scripts($hook_suffix)
             'presets' => $buttonPresets // プリセットデータを追加
 
 
+        ));
+
+        $clicks_button_1 = get_button_clicks_last_7_days(1);
+        $clicks_button_2 = get_button_clicks_last_7_days(2);
+        $clicks_button_3 = get_button_clicks_last_7_days(3);
+
+        wp_localize_script('floating-button-admin-js', 'ClickChartData', array(
+            'button1' => $clicks_button_1,
+            'button2' => $clicks_button_2,
+            'button3' => $clicks_button_3
         ));
     }
 }
@@ -416,6 +427,12 @@ function floating_button_settings_page()
 
 
                             </div>
+                            <?php
+                            $click_count = get_option("button_{$i}_click_count", 0);
+                            ?>
+                            <p>
+                                <strong><?php printf(__('クリック数: %d 回', 'floating-button'), $click_count); ?></strong>
+                            </p>
 
                         </div>
                     <?php endfor; ?>
@@ -498,6 +515,111 @@ function floating_button_settings_page()
                 </div>
 
             </form>
+
+            <h3 class="mt-40">直近7日間のクリック数</h3>
+            <canvas id="click-chart" width="700" height="350"></canvas>
+
+
+            <?php
+            $click_data = get_all_click_counts_for_buttons();
+            ?>
+
+
+            <h3 class="mt-40">全期間のクリック数</h3>
+            <!-- <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="margin-bottom: 20px;">
+                <input type="hidden" name="action" value="export_floating_button_clicks_csv">
+
+                <fieldset>
+                    <legend><strong>📅 期間選択</strong></legend>
+                    <label>
+                        <input type="radio" name="period" value="all" checked>
+                        全期間
+                    </label>
+                    &nbsp;&nbsp;
+                    <label>
+                        <input type="radio" name="period" value="this_month">
+                        今月のみ
+                    </label>
+                    &nbsp;&nbsp;
+                    <label>
+                        <input type="radio" name="period" value="custom">
+                        指定範囲
+                    </label>
+                </fieldset>
+
+                <div id="custom-date-range" style="margin-top: 10px;">
+                    <label for="start_date">開始日:</label>
+                    <input type="date" name="start_date">
+                    &nbsp;
+                    <label for="end_date">終了日:</label>
+                    <input type="date" name="end_date">
+                </div>
+
+                <input type="submit" class="button button-secondary" value="📥 CSVでダウンロード">
+            </form> -->
+
+
+            <table class="widefat striped">
+                <thead>
+                    <tr>
+                        <th>日付</th>
+                        <th>ボタン 1</th>
+                        <th>ボタン 2</th>
+                        <th>ボタン 3</th>
+                        <th>合計</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $totals = [1 => 0, 2 => 0, 3 => 0, 'total' => 0];
+                    foreach ($click_data as $date => $counts) :
+                        $totals[1] += $counts[1];
+                        $totals[2] += $counts[2];
+                        $totals[3] += $counts[3];
+                        $totals['total'] += $counts['total'];
+                    ?>
+                        <tr>
+                            <td><?php echo esc_html(date('m/d', strtotime($date))); ?></td>
+                            <td><?php echo esc_html($counts[1]); ?></td>
+                            <td><?php echo esc_html($counts[2]); ?></td>
+                            <td><?php echo esc_html($counts[3]); ?></td>
+                            <td><strong><?php echo esc_html($counts['total']); ?></strong></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <!-- 合計行 -->
+                    <tr style="font-weight: bold; background-color: #f9f9f9;">
+                        <td>合計</td>
+                        <td><?php echo number_format($totals[1]); ?></td>
+                        <td><?php echo number_format($totals[2]); ?></td>
+                        <td><?php echo number_format($totals[3]); ?></td>
+                        <td><?php echo number_format($totals['total']); ?></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <script>
+                // 期間選択で指定範囲を選んだときだけ日付入力欄を表示
+                (function() {
+                    const radios = document.querySelectorAll("input[name='period']");
+                    const dateRange = document.getElementById("custom-date-range");
+
+                    if (!radios.length || !dateRange) return;
+
+                    function toggleDateInputs() {
+                        const selected = document.querySelector(
+                            "input[name='period']:checked"
+                        ).value;
+                        dateRange.style.display = selected === "custom" ? "block" : "none";
+                    }
+
+                    radios.forEach((radio) => {
+                        radio.addEventListener("change", toggleDateInputs);
+                    });
+
+                    toggleDateInputs();
+                })();
+            </script>
+
 
 
         </div>
@@ -643,9 +765,12 @@ function handle_button_click()
 {
     if (isset($_POST['button_id'])) {
         $button_id = intval($_POST['button_id']);
-        $click_count = get_option('button_' . $button_id . '_click_count', 0);
+        $date = date('Y-m-d');
+        $option_key = "button_{$button_id}_click_count_{$date}";
+
+        $click_count = get_option($option_key, 0);
         $click_count++;
-        update_option('button_' . $button_id . '_click_count', $click_count);
+        update_option($option_key, $click_count);
 
         wp_send_json_success(array('click_count' => $click_count));
     } else {
@@ -653,9 +778,23 @@ function handle_button_click()
     }
 }
 
+
 // AJAXアクションをフック
 add_action('wp_ajax_record_button_click', 'handle_button_click');
 add_action('wp_ajax_nopriv_record_button_click', 'handle_button_click'); // ログインしていないユーザーもアクセス可能
+
+function get_button_clicks_last_7_days($button_id)
+{
+    $data = [];
+    for ($i = 6; $i >= 0; $i--) {
+        $date = date('Y-m-d', strtotime("-{$i} days"));
+        $option_key = "button_{$button_id}_click_count_{$date}";
+        $data[$date] = get_option($option_key, 0);
+    }
+    return $data;
+}
+
+
 
 function verify_license_key()
 {
@@ -725,3 +864,100 @@ function display_license_validation_message()
     }
 }
 add_action('admin_notices', 'display_license_validation_message');
+
+// ==============================
+// 全期間のクリック数を取得する関数
+// ==============================
+function get_all_click_counts_for_buttons($button_ids = [1, 2, 3])
+{
+    global $wpdb;
+    $results = [];
+
+    // wp_optionsから対象のキーをすべて取得
+    $options = $wpdb->get_results(
+        "SELECT option_name, option_value FROM $wpdb->options WHERE option_name LIKE 'button\_%\_click\_count\_%'",
+        ARRAY_A
+    );
+
+    foreach ($options as $opt) {
+        if (preg_match('/button_(\d+)_click_count_(\d{4}-\d{2}-\d{2})/', $opt['option_name'], $matches)) {
+            $button_id = intval($matches[1]);
+            $date = $matches[2];
+            if (!in_array($button_id, $button_ids)) continue;
+
+            $results[$date][$button_id] = intval($opt['option_value']);
+        }
+    }
+
+    // 日付順に並べ、未定義のボタンは0で補完、合計も出す
+    ksort($results);
+    foreach ($results as $date => &$data) {
+        $total = 0;
+        foreach ($button_ids as $id) {
+            $data[$id] = $data[$id] ?? 0;
+            $total += $data[$id];
+        }
+        $data['total'] = $total;
+    }
+
+    return $results;
+}
+
+function export_floating_button_clicks_csv()
+{
+    if (!current_user_can('manage_options')) {
+        wp_die('アクセス権がありません');
+    }
+
+    $data = get_all_click_counts_for_buttons();
+
+    $selected_period = $_POST['period'] ?? 'all';
+
+    if ($selected_period === 'this_month') {
+        $current_month = date('Y-m');
+        $data = array_filter($data, function ($counts, $date) use ($current_month) {
+            return strpos($date, $current_month) === 0;
+        }, ARRAY_FILTER_USE_BOTH);
+    } elseif ($selected_period === 'custom') {
+        $start = $_POST['start_date'] ?? '';
+        $end = $_POST['end_date'] ?? '';
+
+        // 開始・終了日が指定されていればフィルター適用
+        if ($start && $end) {
+            $start_date = date('Y-m-d', strtotime($start));
+            $end_date = date('Y-m-d', strtotime($end));
+
+            $data = array_filter($data, function ($counts, $date) use ($start_date, $end_date) {
+                return $date >= $start_date && $date <= $end_date;
+            }, ARRAY_FILTER_USE_BOTH);
+        }
+    }
+
+
+    $filename = 'floating-button-clicks-' . ($selected_period === 'this_month' ? 'this-month' : 'all') . '-' . date('Ymd') . '.csv';
+
+    header('Content-Type: text/csv; charset=UTF-8');
+    header('Content-Disposition: attachment; filename=' . $filename);
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
+    echo "\xEF\xBB\xBF"; // UTF-8 BOM for Excel
+
+    $output = fopen('php://output', 'w');
+    fputcsv($output, ['日付', 'ボタン1', 'ボタン2', 'ボタン3', '合計']);
+
+    foreach ($data as $date => $row) {
+        fputcsv($output, [
+            $date,
+            $row[1],
+            $row[2],
+            $row[3],
+            $row['total'],
+        ]);
+    }
+
+    fclose($output);
+    exit;
+}
+
+add_action('admin_post_export_floating_button_clicks_csv', 'export_floating_button_clicks_csv');

@@ -1,4 +1,6 @@
 jQuery(document).ready(function ($) {
+  console.log("script.js 読み込まれました");
+
   console.log(FloatingButton);
 
   var closeButtonHtml =
@@ -52,9 +54,13 @@ jQuery(document).ready(function ($) {
       var image =
         '<a href="' +
         button.linkUrl +
-        '" class="floating-button-image"><img src="' +
+        '" class="floating-button floating-button-image" data-button-id="' +
+        i +
+        '">' +
+        '<img src="' +
         button.imageUrl +
-        '"></a>';
+        '">' +
+        "</a>";
       buttonsWrapper.append(image);
     } else {
       // 画像がない場合、通常のボタンを表示

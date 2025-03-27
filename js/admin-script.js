@@ -184,3 +184,77 @@ jQuery(document).ready(function ($) {
     }
   });
 });
+
+function renderClickChart(canvasId, label, data) {
+  const rawDates = Object.keys(ClickChartData.button1);
+  const formattedDates = rawDates.map((dateStr) => {
+    const date = new Date(dateStr);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${month}/${day}`; // 例: 3/27
+  });
+
+  const button1 = Object.values(ClickChartData.button1);
+  const button2 = Object.values(ClickChartData.button2);
+  const button3 = Object.values(ClickChartData.button3);
+
+  const ctx = document.getElementById("click-chart").getContext("2d");
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: formattedDates, // ←ここが修正ポイント
+      datasets: [
+        {
+          label: "ボタン 1",
+          data: button1,
+          backgroundColor: "rgba(255, 99, 132, 0.6)",
+        },
+        {
+          label: "ボタン 2",
+          data: button2,
+          backgroundColor: "rgba(54, 162, 235, 0.6)",
+        },
+        {
+          label: "ボタン 3",
+          data: button3,
+          backgroundColor: "rgba(75, 192, 192, 0.6)",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            footer: function (tooltipItems) {
+              const total = tooltipItems.reduce(
+                (sum, item) => sum + item.parsed.y,
+                0
+              );
+              return `合計: ${total} 回`;
+            },
+          },
+        },
+        legend: {
+          position: "top",
+        },
+      },
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1,
+          },
+        },
+      },
+    },
+  });
+}
+
+renderClickChart("click-chart-1", "ボタン 1", ClickChartData.button1);
+renderClickChart("click-chart-2", "ボタン 2", ClickChartData.button2);
+renderClickChart("click-chart-3", "ボタン 3", ClickChartData.button3);
