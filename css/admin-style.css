@@ -1,0 +1,184 @@
+h2,
+h3 {
+  font-size: 1.4em;
+  padding: 10px 0 10px 15px;
+  background: #333333;
+  color: #fff;
+}
+h4 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+}
+.mt-10 {
+  margin-top: 10px !important;
+}
+.mt-20 {
+  margin-top: 20px !important;
+}
+.mt-30 {
+  margin-top: 30px !important;
+}
+.mt-40 {
+  margin-top: 40px !important;
+}
+.mt-50 {
+  margin-top: 50px !important;
+}
+.mt-60 {
+  margin-top: 60px !important;
+}
+
+.floating-button-plugin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.floating-button-plugin-header .notice {
+  order: -1;
+  width: 100%;
+}
+
+.wrap .floating-button-plugin-header h1 {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.floating-button-plugin-header-options {
+  display: flex;
+  align-items: end;
+  gap: 20px;
+}
+
+.license-forms-title {
+  margin-bottom: 5px;
+}
+
+.license-check-form {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
+.license-revoke-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.premium-badge {
+  font-size: 14px;
+  background: #ffd700;
+  padding: 2px 10px 2px 10px;
+  border-radius: 50px;
+  color: #4b4b4b;
+  font-weight: bold;
+  text-decoration: none;
+  vertical-align: 0px;
+}
+
+.premium-badge i {
+  margin-right: 5px;
+}
+
+.premium-link {
+  font-size: 14px;
+  margin-left: 5px;
+  background: #ffd700;
+  padding: 2px 8px 2px 5px;
+  border-radius: 50px;
+  color: #4b4b4b;
+  font-weight: bold;
+  text-decoration: none; /* リンクの下線を削除 */
+  transition: 0.2s;
+  vertical-align: -1px;
+}
+
+.premium-link:hover {
+  background-color: #e6c000;
+  color: #ffffff;
+  transition: 0.2s;
+}
+
+.device-settings {
+  display: flex;
+  gap: 5px;
+}
+
+.device-setting {
+  display: flex;
+  align-items: end;
+}
+
+.device-setting label {
+  margin-right: 5px; /* ラベルとチェックボックスの間隔 */
+}
+
+.floating-button-settings-group {
+  display: none;
+  width: calc(33.3% - 40px);
+  padding: 10px;
+  background: #fff;
+}
+
+.button-settings-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.microcopy-input {
+  width: 250px;
+}
+
+/* ラジオボタンのラベルを横並びにするためのスタイル */
+.floating-button-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 14px;
+}
+
+.floating-button-icons input[type="radio"] {
+  margin-right: 1px;
+}
+
+.floating-button-icons label {
+  cursor: pointer; /* ラベルにカーソルを合わせたときのマウスポインタを変更 */
+  vertical-align: 1px;
+}
+
+.use-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.image-preview {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.image-preview img {
+  width: 250px;
+  object-fit: contain;
+  border: 4px solid #eee;
+}
+
+.remove-image-button {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  background-color: #111;
+  color: #fff;
+  border-radius: 100px;
+  padding: 0px 5.5px 2px 5.5px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}

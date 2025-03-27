@@ -1,0 +1,38 @@
+#floating_button_meta_box {
+  box-sizing: border-box;
+}
+
+#floating_button_meta_box .inside {
+  padding: 0px 16px 20px;
+}
+
+#floating_button_meta_box label {
+  font-weight: bold;
+}
+
+#floating_button_meta_box select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #949494;
+  margin-top: 5px;
+}
+
+.premium-link {
+  font-size: 12px;
+  margin-left: 5px;
+  background: #ffd700;
+  padding: 2px 8px 2px 5px;
+  border-radius: 50px;
+  color: #4b4b4b;
+  font-weight: bold;
+  text-decoration: none; /* リンクの下線を削除 */
+  transition: 0.2s;
+  vertical-align: -1px;
+}
+
+.premium-link:hover {
+  background-color: #e6c000;
+  color: #ffffff;
+  transition: 0.2s;
+}

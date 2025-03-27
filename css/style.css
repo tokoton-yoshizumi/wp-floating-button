@@ -1,0 +1,142 @@
+#floating-buttons-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  padding: 10px 40px;
+  gap: 20px;
+  width: 100%;
+  flex-wrap: nowrap;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.floating-button-close {
+  position: absolute;
+  top: -10px;
+  right: 5px;
+  cursor: pointer;
+  z-index: 1001;
+  background: #111;
+  border-radius: 100px;
+  padding: 0px 4px 1px 4px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.floating-buttons-microcopy {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.floating-buttons-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+#floating-buttons-container.columns-2 .floating-buttons-wrapper {
+  max-width: 600px;
+}
+
+#floating-buttons-container.columns-3 .floating-buttons-wrapper {
+  max-width: 800px;
+}
+
+.floating-button {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+/* 1カラムの場合 */
+#floating-buttons-container.columns-1 .floating-button,
+#floating-buttons-container.columns-1 .floating-button-image {
+  width: 100%; /* フル幅 */
+}
+
+/* 2カラムの場合 */
+#floating-buttons-container.columns-2 .floating-button,
+#floating-buttons-container.columns-2 .floating-button-image {
+  flex-basis: 50%; /* 2つのボタンが各50%の幅を占める */
+}
+
+/* 3カラムの場合 */
+#floating-buttons-container.columns-3 .floating-button,
+#floating-buttons-container.columns-3 .floating-button-image {
+  width: 33.33%; /* 3つのボタンが各約33%の幅を占める */
+}
+
+.floating-button-image {
+  height: 100%;
+}
+.floating-button-image img {
+  width: 100%;
+}
+
+.floating-button-microcopy {
+  font-size: 0.9em;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.floating-button.rounded {
+  border-radius: 5px;
+}
+
+.floating-button.outline {
+  background-color: transparent;
+  color: #000;
+  border: 2px solid #000;
+}
+
+@media (max-width: 767px) {
+  #floating-buttons-container.hide-on-mobile {
+    display: none !important;
+  }
+
+  #floating-buttons-container {
+    gap: 10px;
+    padding: 20px;
+  }
+
+  .floating-button-close {
+    top: -15px;
+    right: 10px;
+  }
+
+  .floating-buttons-wrapper {
+    gap: 10px;
+  }
+
+  /* 3カラムの場合 */
+  #floating-buttons-container.columns-3 .floating-button {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding-top: 8px;
+    padding-bottom: 5px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  #floating-buttons-container.hide-on-tablet {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  #floating-buttons-container.hide-on-desktop {
+    display: none !important;
+  }
+}
